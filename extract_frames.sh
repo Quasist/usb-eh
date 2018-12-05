@@ -7,8 +7,8 @@ extract_frames() {
     for file in "$1"/*/*."$3"; do
         destination="$2${file:${#1}:${#file}-${#1}-${#3}-1}";
         mkdir -p "$destination";
-        ffmpeg -i "$file" -vf fps=10 "$destination/image-%d.$4";
+        ffmpeg -i "$file" -vf scale=-1:720 -qscale:v 4 "$destination/image-%03d.$4";
     done
 }
 
-extract_frames data frames mp4 png
+extract_frames data frames mp4 jpeg
