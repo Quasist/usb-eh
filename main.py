@@ -1,7 +1,7 @@
 from PIL import Image
 import numpy, os
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.cross_validation import cross_val_score
+from sklearn.model_selection import cross_val_score
 path="frames/"
 Xlist=[]
 Ylist=[]
