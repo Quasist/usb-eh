@@ -1,16 +1,18 @@
-import pandas as pd
-import numpy as np
-import csv
-from sklearn import cross_validation
-from sklearn.svm import LinearSVC
-
-#load data
-data = data.csv
-names = ['a', 'b', 'c', 'b 3', 'b micro 3', 'b mini', 'b micro']
-dataset = pd.read_csv(data, names=names)
-
-# head
-print(dataset.head(20))
-
-#classifier
-clf = LinearSVC(gamma=0.001, C=100.)
+from PIL import Image
+import numpy, os
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.cross_validation import cross_val_score
+path="frames/"
+Xlist=[]
+Ylist=[]
+for directory in os.listdir(path):
+        for directory2 in os.listdir(path+directory):
+                for file in os.listdir(path+directory+"/"+directory2):
+                        print(path+directory+"/"+directory2+"/"+file)
+                        img=Image.open(path+directory+"/"+directory2+"/"+file)
+                        featurevector=numpy.array(img).flatten()[:50] #in my case the images dont have the same dimensions, so [:50] only takes the first 50 values
+                        Xlist.append(featurevector)
+                        Ylist.append(directory)
+clf=AdaBoostClassifier(n_estimators=100)
+scores = cross_val_score(clf, Xlist, Ylist)
+print(scores.mean())
