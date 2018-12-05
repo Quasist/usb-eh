@@ -1,0 +1,7 @@
+The dataset was created with a OnePlus 6 phone using the GCam against a mostly white background to reduce
+noise/differences on the images. Data was captured by filming the individual cables at 30fps.
+Every third frame was extracted from these videos and categorized into USB types.
+
+Picking an estimator
+We plan on starting with Linear SVC because of our small sample size. Based on performance of this
+algorithm we might instead consider KNeighbors classifier.
