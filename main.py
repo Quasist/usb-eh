@@ -1,8 +1,7 @@
 from PIL import Image
 import numpy, os
 from sklearn.ensemble import AdaBoostClassifier
-from sklearn.model_selection import cross_val_score
-
+from sklearn.model_selection import cross_val_score, train_test_split
 from skimage.io import imread
 from skimage.filters import threshold_otsu
 from skimage import measure
@@ -11,6 +10,13 @@ from skimage.measure import regionprops
 from skimage.morphology import binary_erosion, binary_dilation, binary_opening
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+
+class DataPoint:
+    label = ''
+    image = None
+    def __init__(self, lbl, img):
+        self.label = lbl
+        self.image = img
 
 def importimage(filename):
     image = imread(filename, as_gray=True)
@@ -80,19 +86,17 @@ def importimage(filename):
     return scaled_cropped_image
 
 path="frames/"
-Xlist=[]
-Ylist=[]
+dataPoints = []
 for directory in os.listdir(path):
     for directory2 in os.listdir(path+directory):
         for file in os.listdir(path+directory+"/"+directory2):
             print(path+directory+"/"+directory2+"/"+file)
-            importimage(path+directory+"/"+directory2+"/"+file)
-            img=Image.open(path+directory+"/"+directory2+"/"+file)
-            featurevector=numpy.array(img).flatten()[:50] #in my case the images dont have the same dimensions, so [:50] only takes the first 50 values
-            Xlist.append(featurevector)
-            Ylist.append(directory)
-            break
+            img = importimage(path+directory+"/"+directory2+"/"+file)
+            dataPoints.append(DataPoint(directory, img))
             # exit(0)
-clf=AdaBoostClassifier(n_estimators=100)
-scores = cross_val_score(clf, Xlist, Ylist)
-print(scores.mean())
+
+training, test = train_test_split(dataPoints, train_size=.8, shuffle=True)
+print("pls no crash")
+
+
+
