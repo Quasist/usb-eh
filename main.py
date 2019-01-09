@@ -12,6 +12,8 @@ from skimage.measure import regionprops
 from skimage.morphology import binary_erosion, binary_dilation, binary_opening
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
+from sklearn.preprocessing import LabelEncoder
+
 
 def importimage(filename):
     image = imread(filename, as_gray=True)
@@ -94,9 +96,11 @@ for directory in os.listdir(path):
                 imgs.append(img)
             # exit(0)
 
-x_train, x_test, y_train, y_test  = train_test_split(labels, imgs, train_size=.8, shuffle=True)
+lb = LabelEncoder()
+encodedLabels = lb.fit_transform(labels)
+x_train, x_test, y_train, y_test  = train_test_split(encodedLabels, imgs, train_size=.8, shuffle=True)
 model = RidgeCV(alphas=numpy.arange(0,10,.2), cv=10)
 model.fit(x_train, y_train)
-predictions = model.predict(x_test)
+predictions = model.predict(x_test.reshape(1, -1))
 score = model.score(x_test, y_test)
 print(score)
