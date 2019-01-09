@@ -2,6 +2,8 @@ from PIL import Image
 import numpy, os
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.model_selection import cross_val_score, train_test_split
+from sklearn.linear_model import RidgeCV
+
 from skimage.io import imread
 from skimage.filters import threshold_otsu
 from skimage import measure
@@ -10,13 +12,6 @@ from skimage.measure import regionprops
 from skimage.morphology import binary_erosion, binary_dilation, binary_opening
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
-
-class DataPoint:
-    label = ''
-    image = None
-    def __init__(self, lbl, img):
-        self.label = lbl
-        self.image = img
 
 def importimage(filename):
     image = imread(filename, as_gray=True)
@@ -75,10 +70,11 @@ def importimage(filename):
         minx -= (height - width) / 2
         maxx += (height - width) / 2
 
-    print(type(int(maxx)))
     cropped_image = gray_image_scaled[int(miny):int(maxy), int(minx):int(maxx)]
-    scaled_cropped_image = resize(cropped_image, (resize_width, resize_height), anti_aliasing=False, mode='constant')
-
+    try:
+        scaled_cropped_image = resize(cropped_image, (resize_width, resize_height), anti_aliasing=False, mode='constant')
+    except:
+        return None
     # fig3, (ax4) = plt.subplots(1)
     # ax4.imshow(scaled_cropped_image , cmap="gray")
     # plt.show()
@@ -86,17 +82,21 @@ def importimage(filename):
     return scaled_cropped_image
 
 path="frames/"
-dataPoints = []
+labels = []
+imgs = []
 for directory in os.listdir(path):
     for directory2 in os.listdir(path+directory):
         for file in os.listdir(path+directory+"/"+directory2):
-            print(path+directory+"/"+directory2+"/"+file)
+#            print(path+directory+"/"+directory2+"/"+file)
             img = importimage(path+directory+"/"+directory2+"/"+file)
-            dataPoints.append(DataPoint(directory, img))
+            if img is not None:
+                labels.append(directory)
+                imgs.append(img)
             # exit(0)
 
-training, test = train_test_split(dataPoints, train_size=.8, shuffle=True)
-print("pls no crash")
-
-
-
+x_train, x_test, y_train, y_test  = train_test_split(labels, imgs, train_size=.8, shuffle=True)
+model = RidgeCV(alphas=numpy.arange(0,10,.2), cv=10)
+model.fit(x_train, y_train)
+predictions = model.predict(x_test)
+score = model.score(x_test, y_test)
+print(score)
