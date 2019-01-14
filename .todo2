@@ -1,0 +1,21 @@
+{
+  "title": "",
+  "tasks": [
+    {
+      "text": "Precompute final images",
+      "priority": "medium",
+      "creation": 1547209709
+    },
+    {
+      "text": "demo thingy",
+      "priority": "medium",
+      "creation": 1547209740
+    },
+    {
+      "text": "jupyter thingy",
+      "priority": "medium",
+      "creation": 1547209760,
+      "completion": 1547463571
+    }
+  ]
+}
