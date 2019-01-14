@@ -108,31 +108,55 @@ def cross_validation(model, num_of_folds, training_data, training_labels):
     print(accuracy_result)
     print("End cross_validation")
 
+X_train, X_test, y_train, y_test = train_test_split(imgs, labels, test_size=0.33, random_state=42)
+
 t0 = time.time()
+print("SVC poly")
 # https://scikit-learn.org/stable/modules/generated/sklearn.svm.SVC.html
 # svc_model = SVC(kernel='linear', probability=True)
-# svc_model = SVC(kernel='poly', probability=True, gamma='scale', coef0=0.5)
+svc_model = SVC(kernel='poly', probability=True, gamma='scale', coef0=0.5)
 # cross_validation(svc_model, 4, imgs, labels)
 # cross_validation(svc_model, 10, imgs, labels) # good one!
-# print("Time taken: {} seconds.".format(time.time() - t0))
+svc_model.fit(X_train, y_train)
+result1 = svc_model.predict(X_test)
+correct = 0
+wrong = 0
+for i in range(0, len(X_test)):
+    if(y_test[i] == result1[i]):
+        correct += 1
+    else:
+        wrong += 1
+print("Accuracy: {}% ({}/{})".format(correct / (correct + wrong) * 100, correct, correct + wrong))
+print("Time taken: {} seconds.".format(time.time() - t0))
 
 t0 = time.time()
+print("DecisionTreeClassifier")
 # https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeClassifier.html#sklearn.tree.DecisionTreeClassifier
-# from sklearn.tree import DecisionTreeClassifier
-# dtf = DecisionTreeClassifier(random_state=42)
+from sklearn.tree import DecisionTreeClassifier
+dtf = DecisionTreeClassifier(random_state=42)
 # cross_validation(dtf, 10, imgs, labels)
-# print("Time taken: {} seconds.".format(time.time() - t0))
+dtf.fit(X_train, y_train)
+result1 = dtf.predict(X_test)
+correct = 0
+wrong = 0
+for i in range(0, len(X_test)):
+    if(y_test[i] == result1[i]):
+        correct += 1
+    else:
+        wrong += 1
+print("Accuracy: {}% ({}/{})".format(correct / (correct + wrong) * 100, correct, correct + wrong))
+print("Time taken: {} seconds.".format(time.time() - t0))
 
 t0 = time.time()
+print("KNeighbor")
 # KNeighbor
 from sklearn.neighbors import KNeighborsClassifier
 knc = KNeighborsClassifier(n_neighbors=5)
 # cross_validation(knc, 10, imgs, labels)
-X_train, X_test, y_train, y_test = train_test_split(imgs, labels, test_size=0.33, random_state=42)
 knc.fit(X_train, y_train)
 result1 = knc.predict(X_test)
-result2 = knc.predict_proba(X_test[0:10])
-print(result2)
+# result2 = knc.predict_proba(X_test[0:10])
+# print(result2)
 correct = 0
 wrong = 0
 for i in range(0, len(X_test)):
